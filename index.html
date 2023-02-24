@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+<script>
+$(document).ready(function(){
+  $("p").click(function(){
+    $(this).hide();
+  });
+});
+</script>
+</head>
+<body>
+<iframe src="demo_iframe.htm" height="200" width="300" title="Iframe Example"></iframe>
+
+<p>If you click on me, I will disappear.</p>
+<p>Click me away!</p>
+<p>Click me too!</p> <b>
+
+<span class="reshare">
+    <button id="reshare-btn" style="color:#fff">share screen</button>
+</span>
+
+
+<script>
+    const domain = 'dev.jitsi.sys4tr.com';
+    const room = `{{ $room }}`;
+    const m_flg = `{{ $monitoring_flg }}`;
+    const n_flg = `{{ $name_flg }}`;
+    const p_flg = `{{ $password_flg }}`;
+    let jitsi_api = null;
+    let display_name = "";
+    let newDate = new Date();
+    $('.btn-heart, .btn-lung, .btn-pulse, .points').hide();
+    if(n_flg == '0' && p_flg == '0' && m_flg == '1')
+    initialize_vconf(newDate.toLocaleString("es-CL"));
+    function initialize_vconf(disp_name){
+        const options = {
+            roomName: room,
+            parentNode: document.querySelector('#live-page'),
+            width: 0,
+            height: 0,
+        
+            configOverwrite: {
+                enableNoAudioDetection: false,
+                enableNoisyMicDetection: false,
+                startWithAudioMuted: true,
+                startWithVideoMuted: true,
+                enableWelcomePage: false,
+                prejoinPageEnable: false,
+                disableRemoteMute: true,
+                hideConferenceSubject: true,
+                apiLogLevels: ['error', 'info'],
+                enableSaveLogs: false,
+                disableDeepLinking: true,
+                notifications: [],
+                startScreenSharing: false
+            },
+            interfaceConfigOverwrite: {
+                // DISABLE_DOMINANT_SPEAKER_INDICATOR: true,
+                // DISABLE_JOIN_LEAVE_NOTIFICATIONS: true,
+                // DISABLE_VIDEO_BACKGROUND: true,
+                // DISABLE_PRESENCE_STATUS: true,
+                // DISABLE_TRANSCRIPTION_SUBTITLES: true,
+                // DISPLAY_WELCOME_FOOTER: true,
+                // DISPLAY_WELCOME_PAGE_CONTENT: true,
+                // DISPLAY_WELCOME_PAGE_TOOLBAR_ADDITIONAL_CONTENT: true,
+                // RECENT_LIST_ENABLED: false,
+                // SHOW_WATERMARK_FOR_GUESTS: false,
+                // TOOLBAR_BUTTONS: [],
+                // SETTINGS_SECTIONS: [],
+                // ENFORCE_NOTIFICATION_AUTO_DISMISS_TIMEOUT: 0,
+                // VIDEO_QUALITY_LABEL_DISABLED: true,
+                // HIDE_INVITE_MORE_HEADER: true,
+                // DISPLAY_WELCOME_PAGE_ADDITIONAL_CARD: true,
+                // SHOW_BRAND_WATERMARK: false,
+                // DISABLE_FOCUS_INDICATOR: true,
+                // SHOW_CHROME_EXTENSION_BANNER: false,
+                // DISABLE_VIDEO_BACKGROUND: true,
+                // HIDE_DEEP_LINKING_LOGO: true,
+                // SHOW_JITSI_WATERMARK: false,
+                // VERTICAL_FILMSTRIP: false
+            },
+            userInfo: {
+                displayName: disp_name
+            }
+        };
+        jitsi_api = new JitsiMeetExternalAPI(domain, options);
+        setTimeout( () => {
+            jitsi_api.executeCommand('toggleShareScreen');
+        },3000 )
+        jitsi_api.addEventListener(`videoConferenceLeft`, () => {
+            setTimeout( () => {
+                console.log("meeting done");
+                const listener = ({ enabled }) => {
+                api.removeEventListener(`tileViewChanged`, listener);
+                if (!enabled) {
+                    jitsi_api.executeCommand(`toggleTileView`);
+                }
+                };
+                jitsi_api.addEventListener(`tileViewChanged`, listener);
+                jitsi_api.executeCommand(`toggleTileView`);
+            },2000)
+        });
+    }
+    function pauseAudio() {
+        if (window.location.pathname === "/home" || window.location.pathname === "/" ) {
+            //pause all audios instances in bookmark
+            for (var prop in audiojs.instances) {
+                audiojs.instances[prop].pause()
+            }
+        }
+        return;
+    }
+    window.onbeforeunload = function() {
+        return "Are you sure you want to leave?";
+    };
+    $('#btn-user-ok').click( (e) => {
+        var user_input = $('#btn-user-ok').closest('.exit-fullscreen-overlay');
+        display_name = $('#display_name').val().trim();
+        user_input.hide();
+        if(display_name == ""){
+            user_input.show();
+            $('#display_name').addClass('red-border');
+        }else {
+            if(m_flg !== '0'){
+                if(p_flg == '0')
+                initialize_vconf(display_name);
+            }
+        }
+    });
+    $("#reshare-btn").click(() => {
+        $("#reshare-btn").attr("disabled", true);
+        $(".reshare").css('backgroundColor','#CACACA');
+        setTimeout( () => {
+            $("#reshare-btn").attr("disabled", false);
+            $(".reshare").css('backgroundColor','#47B8E8');
+            jitsi_api.executeCommand('toggleShareScreen');
+        },3000 )
+    });
+    $("#reshare-btn-full").click(() => {
+        $("#reshare-btn-full").attr("disabled", true);
+        $(".reshare_fullscreen").css('backgroundColor','#CACACA');
+        setTimeout( () => {
+            $("#reshare-btn-full").attr("disabled", false);
+            $(".reshare_fullscreen").css('backgroundColor','#47B8E8');
+            jitsi_api.executeCommand('toggleShareScreen');
+        },3000 )
+    });
+    $(document).on('keypress',function(e) {
+        // prevent submit form on enter
+        if(e.which == 13) {
+            e.preventDefault();
+        }
+    });
+    $('#btn-pass-ok').click(() => {
+        let pw = $('#display_pass').val();
+        if(pw.trim() == ""){
+            $('#display_pass').addClass("red-border");
+            return false;
+        }
+        let urlParams = new URLSearchParams(window.location.search);
+        let gid = urlParams.get('groupAdminId');
+        let lib_id = $('#offline_id').data('id');
+        let params = {
+            pass: pw,
+            gid: gid,
+            lib_id: lib_id
+        };
+        $.ajaxSetup({
+            // 普通のheaderでは駄目だったOK
+            // getならこのajaxSetup自体を丸々なくせば動作する
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader('X-CSRF-TOKEN', $('meta[name="csrf-token"]').attr('content'));
+            }
+        });
+        $.ajax({
+            url: "/api/checkPass",
+            type: "post",
+            data: params,
+        })
+        .done(function (res) {
+            if(res.length !== 0){
+                $('#btn-pass-ok').closest('.exit-fullscreen-overlay').hide();
+                if(m_flg !== '0'){
+                    display_name = n_flg == '0' ? (new Date()).toLocaleString("es-CL") : display_name;
+                    initialize_vconf(display_name);
+                }
+            }else {
+                $('#error-pass').show();
+                setTimeout(() => {
+                    $('#error-pass').hide();
+                },5000)
+            }
+         })
+        .fail(function (jqxhr, status, error) {
+            console.log("Something went wrong: ", error);
+         });
+    });
+</script>
+
+</body>
+</html>

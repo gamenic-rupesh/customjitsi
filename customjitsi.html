@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+<script>
+$(document).ready(function(){
+  $("p").click(function(){
+    $(this).hide();
+  });
+});
+</script>
+</head>
+
+<body>
+    <div id="jitsiWindow" style="height:500px; overflow:hidden">
+
+    </div>
+
+    <script src='https://{{ room.server.url }}/external_api.js'></script>
+<script>
+        const domain = '{{ room.server.url }}';
+        const options = {
+            roomName: '{{ room.uid }}',
+           // width: '100%',
+  configOverwrite: {
+        disableDeepLinking: true,
+
+    },
+    interfaceConfigOverwrite: {
+       MOBILE_APP_PROMO: false,
+    },
+            height: 700,
+            parentNode: document.querySelector('#jitsiWindow'),
+            userInfo: {
+                displayName: '{{ name }}'
+            }
+        };
+        api = new JitsiMeetExternalAPI(domain, options);
+</script>
+</body>

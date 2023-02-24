@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="content-type" content="text/html;charset=utf-8">
+</head>
+
+<script  type="text/javascript" src="https://jitsi.example.com/external_api.js"></script>
+
+<body>
+    <!-- <iframe height="100%" width="800" title="Iframe Example"> -->
+
+    <button id="share">share screen</button>
+    <div id="live-page"></div>
+
+    <!-- </iframe> -->
+    <script>
+        const domain = 'jitsi.example.com';
+        // const room = `{{ $room }}`;
+
+        const options = {
+            roomName: "Trial",
+            parentNode: document.querySelector('#live-page'),
+            width: 0,
+            height: 0,
+
+            configOverwrite: {
+                enableNoAudioDetection: false,
+                enableNoisyMicDetection: false,
+                startWithAudioMuted: true,
+                startWithVideoMuted: true,
+                enableWelcomePage: false,
+                prejoinPageEnable: false,
+                disableRemoteMute: true,
+                hideConferenceSubject: true,
+                apiLogLevels: ['error', 'info'],
+                enableSaveLogs: false,
+                disableDeepLinking: true,
+                notifications: [],
+                startScreenSharing: false
+            },
+            interfaceConfigOverwrite: {
+                // DISABLE_DOMINANT_SPEAKER_INDICATOR: true,
+                // DISABLE_JOIN_LEAVE_NOTIFICATIONS: true,
+                // DISABLE_VIDEO_BACKGROUND: true,
+                // DISABLE_PRESENCE_STATUS: true,
+                // DISABLE_TRANSCRIPTION_SUBTITLES: true,
+                // DISPLAY_WELCOME_FOOTER: true,
+                // DISPLAY_WELCOME_PAGE_CONTENT: true,
+                // DISPLAY_WELCOME_PAGE_TOOLBAR_ADDITIONAL_CONTENT: true,
+                // RECENT_LIST_ENABLED: false,
+                // SHOW_WATERMARK_FOR_GUESTS: false,
+                // TOOLBAR_BUTTONS: [],
+                // SETTINGS_SECTIONS: [],
+                // ENFORCE_NOTIFICATION_AUTO_DISMISS_TIMEOUT: 0,
+                // VIDEO_QUALITY_LABEL_DISABLED: true,
+                // HIDE_INVITE_MORE_HEADER: true,
+                // DISPLAY_WELCOME_PAGE_ADDITIONAL_CARD: true,
+                // SHOW_BRAND_WATERMARK: false,
+                // DISABLE_FOCUS_INDICATOR: true,
+                // SHOW_CHROME_EXTENSION_BANNER: false,
+                // DISABLE_VIDEO_BACKGROUND: true,
+                // HIDE_DEEP_LINKING_LOGO: true,
+                // SHOW_JITSI_WATERMARK: false,
+                // VERTICAL_FILMSTRIP: false
+            },
+            userInfo: {
+                displayName: "Hello"
+            }
+        };
+        jitsi_api = new JitsiMeetExternalAPI(domain, options);
+
+        setTimeout(() => {
+            jitsi_api.executeCommand('toggleShareScreen');
+        }, 3000)
+
+        jitsi_api.addEventListener(`videoConferenceLeft`, () => {
+            setTimeout(() => {
+                console.log("meeting done");
+                const listener = ({ enabled }) => {
+                    api.removeEventListener(`tileViewChanged`, listener);
+                    if (!enabled) {
+                        jitsi_api.executeCommand(`toggleTileView`);
+                    }
+                };
+                jitsi_api.addEventListener(`tileViewChanged`, listener);
+                jitsi_api.executeCommand(`toggleTileView`);
+            }, 2000)
+        });
+
+
+        $("#share").click(() => {
+            setTimeout(() => {
+                jitsi_api.executeCommand('toggleShareScreen');
+            }, 3000)
+        });
+    </script>
+
+</body>
+
+</html>

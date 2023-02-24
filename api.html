@@ -1,0 +1,149 @@
+<!-- <html itemscope itemtype="http://schema.org/Product" prefix="og: http://ogp.me/ns#" xmlns="http://www.w3.org/1999/html">
+     -->
+<!DOCTYPE html>
+<html>
+     <head>
+        <meta charset="utf-8">
+        <meta http-equiv="content-type" content="text/html;charset=utf-8">
+    </head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+
+    <body>
+         <!-- <button id="reshare-btn"> Screenshare </button> -->
+
+        <!-- <script src="https://jitsi.example.com/external_api.js"></script> -->
+        <!-- <script>
+            var domain = "jitsi.example.com";
+            var options = {
+                roomName: "JitsiMeetAPIExample",
+                width: 700,
+                height: 180,
+                parentNode: undefined,
+                configOverwrite: {},
+                interfaceConfigOverwrite: {}
+            }
+            var api = new JitsiMeetExternalAPI(domain, options);
+        </script> -->
+
+
+
+<!-- メイン聴くゾウライブラリ（左） -->
+
+  <div id="live-page">
+    <!-- <div id="video1">test</div>
+    <div id="video2">test</div>
+    <div id="video3">test</div>
+    <div id="video4">test</div>
+    <div id="video5">test</div>
+    <div id="video6">test</div>
+    <div id="video7">test</div>
+    <div id="video8">test</div> -->
+  </div>
+  <script src='https://jitsi.example.com/external_api.js'></script>
+  <script>
+    $(document).ready(function() {
+        const domain = 'jitsi.example.com';
+        const roomName = 'university_A'
+        // document.querySelector('#live-page').children.forEach( (v, k) => {
+            const options = {
+                roomName: roomName,
+                parentNode: document.querySelector('#live-page'),
+                // width: 1000,
+                //height: 700,
+            
+                configOverwrite: {
+                    enableNoAudioDetection: false,
+                    enableNoisyMicDetection: false,
+                    startWithAudioMuted: true,
+                    startWithVideoMuted: true,
+                    enableWelcomePage: false,
+                    prejoinPageEnable: false,
+                    disableRemoteMute: true,
+                    hideConferenceSubject: true,
+                    apiLogLevels: ['error', 'info'],
+                    enableSaveLogs: false,
+                    disableDeepLinking: true,
+                    notifications: [],
+                    disableSelfView: true,
+                    toolbarButtons: []
+                },
+                interfaceConfigOverwrite: {
+                    DISABLE_DOMINANT_SPEAKER_INDICATOR: true,
+                    DISABLE_JOIN_LEAVE_NOTIFICATIONS: true,
+                    DISABLE_VIDEO_BACKGROUND: true,
+                    DISABLE_PRESENCE_STATUS: true,
+                    DISABLE_TRANSCRIPTION_SUBTITLES: true,
+                    DISPLAY_WELCOME_FOOTER: true,
+                    DISPLAY_WELCOME_PAGE_CONTENT: true,
+                    DISPLAY_WELCOME_PAGE_TOOLBAR_ADDITIONAL_CONTENT: true,
+                    RECENT_LIST_ENABLED: false,
+                    SHOW_WATERMARK_FOR_GUESTS: false,
+                    //TOOLBAR_BUTTONS: [],
+                    SETTINGS_SECTIONS: [],
+                    ENFORCE_NOTIFICATION_AUTO_DISMISS_TIMEOUT: 0,
+                    VIDEO_QUALITY_LABEL_DISABLED: true,
+                    HIDE_INVITE_MORE_HEADER: true,
+                    DISPLAY_WELCOME_PAGE_ADDITIONAL_CARD: true,
+                    SHOW_BRAND_WATERMARK: false,
+                    DISABLE_FOCUS_INDICATOR: true,
+                    SHOW_CHROME_EXTENSION_BANNER: false,
+                    DISABLE_VIDEO_BACKGROUND: true,
+                    HIDE_DEEP_LINKING_LOGO: true,
+                    SHOW_JITSI_WATERMARK: false,
+                    VERTICAL_FILMSTRIP: false
+                },
+                userInfo: {
+					displayName: "Supervisor"
+				}
+            };
+            const api = new JitsiMeetExternalAPI(domain, options);
+            api.addEventListener(`contentSharingParticipantsChanged`, () => {
+                setTimeout( () => {
+                    const listener = ({ enabled }) => {
+                    api.removeEventListener(`tileViewChanged`, listener);
+                    if (!enabled) {
+                        api.executeCommand(`toggleTileView`);
+                    }
+                    };
+                    api.addEventListener(`tileViewChanged`, listener);
+                    api.executeCommand(`toggleTileView`);
+                },5000)
+                
+            });
+            api.addEventListener(`videoConferenceJoined`, () => {
+                setTimeout( () => {
+                    const listener = ({ enabled }) => {
+                    api.removeEventListener(`tileViewChanged`, listener);
+                    if (!enabled) {
+                        api.executeCommand(`toggleTileView`);
+                    }
+                    };
+                    api.addEventListener(`tileViewChanged`, listener);
+                    api.executeCommand(`toggleTileView`);
+                },5000)
+                
+            });
+            api.addEventListener(`videoConferenceLeft`, () => {
+                setTimeout( () => {
+                    const listener = ({ enabled }) => {
+                    api.removeEventListener(`tileViewChanged`, listener);
+                    if (!enabled) {
+                        api.executeCommand(`toggleTileView`);
+                    }
+                    };
+                    api.addEventListener(`tileViewChanged`, listener);
+                    api.executeCommand(`toggleTileView`);
+                },5000)
+                
+            });
+            
+    });
+    // })
+  </script>
+
+<style> #live-page iframe { position: absolute; top: 146px; left: 0; width: 100% !important; height: 100% !important; } </style>
+
+
+
+    </body>
+</html>
